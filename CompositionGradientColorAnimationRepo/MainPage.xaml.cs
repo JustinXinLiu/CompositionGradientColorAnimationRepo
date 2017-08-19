@@ -18,25 +18,35 @@ namespace CompositionGradientColorAnimationRepo
         public MainPage()
         {
             InitializeComponent();
+            Root.SizeChanged += OnRootSizeChanged;
 
             var compositor = Window.Current.Compositor;
 
+            // Initially, we set the end point to be (0,0) 'cause we want to animate it at start.
+            // If you don't want this behavior, simply set it to a different value within (1,1).
             _gradientBrush = compositor.CreateLinearGradientBrush();
             _gradientBrush.EndPoint = Vector2.Zero;
 
+            // Create gradient initial colors.
             var gradientStop1 = compositor.CreateColorGradientStop();
             gradientStop1.Offset = 0.0f;
             gradientStop1.Color = GradientStop1StartColor;
             var gradientStop2 = compositor.CreateColorGradientStop();
             gradientStop2.Offset = 1.0f;
             gradientStop2.Color = GradientStop2StartColor;
-
             _gradientBrush.ColorStops.Add(gradientStop1);
             _gradientBrush.ColorStops.Add(gradientStop2);
 
+            // Assign the gradient brush to the Root element's Visual.
             _backgroundVisual = compositor.CreateSpriteVisual();
             _backgroundVisual.Brush = _gradientBrush;
             ElementCompositionPreview.SetElementChildVisual(Root, _backgroundVisual);
+
+            // There are 3 animations going on here.
+            // First, we kick off an EndPoint offset animation to create an special entrance scene.
+            // Once it's finished, we then kick off TWO other animations simultaneously. 
+            // These TWO animations include a set of gradient stop color animations and
+            // a rotation animation that rotates the gradient brush.
 
             var linearEase = compositor.CreateLinearEasingFunction();
             var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
