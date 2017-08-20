@@ -2,34 +2,28 @@
 using System.Numerics;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Media;
 
 namespace CompositionGradientColorAnimationRepo
 {
-    public sealed partial class MainPage : Page
+    public class AnimatedGradientBrush : XamlCompositionBrushBase
     {
-        /* Old way
-        private readonly CompositionLinearGradientBrush _gradientBrush;
-        private readonly SpriteVisual _backgroundVisual;
+        private CompositionLinearGradientBrush _gradientBrush;
         private static readonly Color GradientStop1StartColor = Color.FromArgb(255, 251, 218, 97);
         private static readonly Color GradientStop2StartColor = Color.FromArgb(255, 255, 90, 205);
-        */
 
-        public MainPage()
+        protected override void OnConnected()
         {
-            InitializeComponent();
-
-            /* Old way
-             *            
-            Root.SizeChanged += OnRootSizeChanged;
-
             var compositor = Window.Current.Compositor;
+
+            // Assign the gradient brush to the CompositionBrush.
+            _gradientBrush = compositor.CreateLinearGradientBrush();
+            CompositionBrush = _gradientBrush;
 
             // Initially, we set the end point to be (0,0) 'cause we want to animate it at start.
             // If you don't want this behavior, simply set it to a different value within (1,1).
-            _gradientBrush = compositor.CreateLinearGradientBrush();
             _gradientBrush.EndPoint = Vector2.Zero;
 
             // Create gradient initial colors.
@@ -42,10 +36,7 @@ namespace CompositionGradientColorAnimationRepo
             _gradientBrush.ColorStops.Add(gradientStop1);
             _gradientBrush.ColorStops.Add(gradientStop2);
 
-            // Assign the gradient brush to the Root element's Visual.
-            _backgroundVisual = compositor.CreateSpriteVisual();
-            _backgroundVisual.Brush = _gradientBrush;
-            ElementCompositionPreview.SetElementChildVisual(Root, _backgroundVisual);
+            Window.Current.SizeChanged += OnWindowSizeChanged;
 
             // There are 3 animations going on here:
             //
@@ -98,20 +89,15 @@ namespace CompositionGradientColorAnimationRepo
                 rotationAnimation.InsertKeyFrame(1.0f, 360.0f, linearEase);
                 _gradientBrush.StartAnimation(nameof(_gradientBrush.RotationAngleInDegrees), rotationAnimation);
             }
-            *
-            */
         }
-        
-        /* Old way
-         * 
-        private void OnRootSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (e.NewSize == e.PreviousSize) return;
 
-            _backgroundVisual.Size = e.NewSize.ToVector2();
-            _gradientBrush.CenterPoint = _backgroundVisual.Size / 2;
+        private void OnWindowSizeChanged(object sender, WindowSizeChangedEventArgs e) => 
+            _gradientBrush.CenterPoint = e.Size.ToVector2() / 2;
+
+        protected override void OnDisconnected()
+        {
+            CompositionBrush?.Dispose();
+            CompositionBrush = null;
         }
-        *
-        */
     }
 }

@@ -6,5 +6,18 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d">
 
-    <Grid x:Name="Root" />
+    <!--Old way-->
+    <!--<Grid x:Name="Root" />-->
+
+    <!--
+        Here's a new way of using a customized brush that inherits from XamlCompositionBrushBase.
+    
+        Note I have hard-coded all the colors and animation configurations within the brush class,
+        you should be able to create your own dependency properties to replace them when needed.
+    -->
+    <Grid>
+        <Grid.Background>
+            <local:AnimatedGradientBrush />
+        </Grid.Background>
+    </Grid>
 </Page>
