@@ -42,8 +42,11 @@ namespace CompositionGradientColorAnimationRepo
             _backgroundVisual.Brush = _gradientBrush;
             ElementCompositionPreview.SetElementChildVisual(Root, _backgroundVisual);
 
-            // There are 3 animations going on here.
-            // First, we kick off an EndPoint offset animation to create an special entrance scene.
+            // There are 3 animations going on here:
+            //
+            // First, we kick off an EndPoint offset animation to smoothly transition a
+            // solid background to a gradient.
+            //
             // Once it's finished, we then kick off TWO other animations simultaneously. 
             // These TWO animations include a set of gradient stop color animations and
             // a rotation animation that rotates the gradient brush.
