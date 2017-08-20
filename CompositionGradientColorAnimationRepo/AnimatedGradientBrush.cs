@@ -96,6 +96,8 @@ namespace CompositionGradientColorAnimationRepo
 
         protected override void OnDisconnected()
         {
+            Window.Current.SizeChanged -= OnWindowSizeChanged;
+
             CompositionBrush?.Dispose();
             CompositionBrush = null;
         }
